@@ -1,0 +1,5 @@
+{
+	"scripts": {
+		"lh": "lighthouse --config-path=lighthouse.config.js --chrome-flags='--ignore-certificate-errors'  https://valles.local/company"
+	}
+}
