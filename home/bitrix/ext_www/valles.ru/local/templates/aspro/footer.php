@@ -98,7 +98,109 @@
 						<?CNext::ShowPageType('search_title_component');?>
 						<?CNext::setFooterTitle();
 		CNext::showFooterBasket();?>
+						<script>
+							window.addEventListener('load', function(event) {
+								if (!window.vendorLoader) {
 
+									window.vendorLoader = function(args = {}) {
+										if (!args.name) {
+											console.warn('vendorLoader: You must pass the name!');
+											return;
+										}
+										if (!args.path) {
+											console.warn('vendorLoader: You must pass the path!');
+											return;
+										}!window.vendor && (window.vendor = {});
+										!window.SITE_TEMPLATE_PATH && (window.SITE_TEMPLATE_PATH = '/local/templates/html/');
+										window.vendor[args.name] = {};
+										window.vendor[args.name].load = {};
+										window.vendor[args.name].load.timeout;
+										window.vendor[args.name].load.status = false;
+										window.vendor[args.name].load.loading = function() {
+
+											if (!window.vendor[args.name].load.status) {
+												window.vendor[args.name].load.status = true;
+												clearTimeout(window.vendor[args.name].load.timeout);
+												$(document).off('scroll.vendor-' + args.name);
+												$(document).off('click.vendor-' + args.name);
+												$(document).off('mouseover.vendor-' + args.name);
+												if (args.path === 'none') {
+													window.vendor[args.name].load.status = true;
+													args.callback && args.callback();
+													$(document).trigger('load.' + args.name)
+												} else {
+													$.getScript(
+														(args.http ? '' : window.SITE_TEMPLATE_PATH) + args.path,
+														args.callback || function() {}
+													).fail(
+														function(jqxhr, settings, exception) {
+															console.log(jqxhr, settings, exception);
+														}
+													);
+												}
+											}
+										};
+
+
+										if (args.event.scroll) {
+											$(document).on('scroll.vendor-' + args.name, function() {
+												window.vendor[args.name].load.loading();
+											});
+											var doc = document.documentElement;
+											var top = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+											top > 100 && window.vendor[args.name].load.loading();
+										}
+
+										if (args.event.click) {
+											$(document).on('click.vendor-' + args.name, function() {
+												window.vendor[args.name].load.loading();
+											});
+										}
+
+										if (args.event.mouseover) {
+											$(document).on('mouseover.vendor-' + args.name, args.event.mouseover.trigger, function() {
+												window.vendor[args.name].load.loading();
+											});
+										}
+
+										if (args.event.timeout) {
+
+											window.vendor[args.name].load.timeout = setTimeout(function() {
+												window.vendor[args.name].load.loading();
+											}, args.timeout || 3000)
+										}
+									}
+								}
+							})
+
+
+							window.vendorLoader && window.vendorLoader({
+								name: 'metrics',
+								path: 'none',
+								event: {
+									// scroll: true,
+									click: true,
+									timeout: 3000,
+									mouseover: 'body',
+								},
+								callback: function() {
+
+									$.ajax({
+										url: '/include/counters.html',
+										success: function(countersHTML) {
+											$("body").append(countersHTML);
+
+										},
+										error: function(e, t) {
+											console.log("error", e, t)
+										},
+										done: function() {
+
+										},
+									})
+								}
+							});
+						</script>
 						</body>
 
 						</html>

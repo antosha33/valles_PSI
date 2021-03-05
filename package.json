@@ -1,5 +1,6 @@
 {
 	"scripts": {
-		"lh": "lighthouse --config-path=lighthouse.config.js --chrome-flags='--ignore-certificate-errors'  https://valles.local/company"
+		"lh": "lighthouse --config-path=lighthouse.config.js --output json --output html --view --output-path ./myfile.json --chrome-flags='--ignore-certificate-errors' http://valles.local/info/brands/",
+		"printBlockedRequests" : "node readJson.js"
 	}
 }
